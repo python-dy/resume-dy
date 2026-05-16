@@ -4,34 +4,85 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>丁毅 · 数据驱动增长</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
+
+/* ─── Theme Variables ─── */
+:root {
+  --bg-body: #f5f5f7;
+  --bg-card: #fff;
+  --bg-section-alt: #fff;
+  --bg-hero-start: #f5f5f7;
+  --bg-hero-end: #e8e8ed;
+  --text-primary: #1d1d1f;
+  --text-secondary: #3a3a3c;
+  --text-muted: #6e6e73;
+  --text-subtle: #86868b;
+  --border-color: #d2d2d7;
+  --nav-bg: rgba(245,245,247,.8);
+  --nav-border: rgba(0,0,0,.08);
+  --hero-text-grad-1: #1d1d1f;
+  --hero-text-grad-2: #515154;
+  --card-hover-shadow: rgba(0,0,0,.1);
+  --timeline-bg: #f5f5f7;
+  --tag-bg: rgba(0,0,0,.04);
+  --footer-border: #d2d2d7;
+  --toolbar-bg: rgba(245,245,247,.85);
+  --toolbar-border: rgba(0,0,0,.1);
+}
+body.dark {
+  --bg-body: #1d1d1f;
+  --bg-card: #2d2d2f;
+  --bg-section-alt: #2d2d2f;
+  --bg-hero-start: #1d1d1f;
+  --bg-hero-end: #2d2d2f;
+  --text-primary: #f5f5f7;
+  --text-secondary: #d2d2d7;
+  --text-muted: #a1a1a6;
+  --text-subtle: #86868b;
+  --border-color: #424245;
+  --nav-bg: rgba(29,29,31,.8);
+  --nav-border: rgba(255,255,255,.08);
+  --hero-text-grad-1: #f5f5f7;
+  --hero-text-grad-2: #a1a1a6;
+  --card-hover-shadow: rgba(0,0,0,.3);
+  --timeline-bg: #1d1d1f;
+  --tag-bg: rgba(255,255,255,.08);
+  --footer-border: #424245;
+  --toolbar-bg: rgba(29,29,31,.85);
+  --toolbar-border: rgba(255,255,255,.1);
+}
+
 body{
   font-family:"SF Pro SC","SF Pro Text","SF Pro Icons","PingFang SC","Helvetica Neue","Helvetica","Arial",sans-serif;
-  background:#f5f5f7;color:#1d1d1f;
+  background:var(--bg-body);color:var(--text-primary);
   -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
-  line-height:1.47059;font-weight:400;letter-spacing:-.022em
+  line-height:1.47059;font-weight:400;letter-spacing:-.022em;
+  transition:background .3s,color .3s
 }
 a{text-decoration:none;color:inherit}
 
 /* ─── Nav ─── */
 nav{
   position:fixed;top:0;left:0;right:0;z-index:9999;
-  background:rgba(245,245,247,.8);backdrop-filter:saturate(180%) blur(20px);
+  background:var(--nav-bg);backdrop-filter:saturate(180%) blur(20px);
   -webkit-backdrop-filter:saturate(180%) blur(20px);
-  border-bottom:1px solid rgba(0,0,0,.08)
+  border-bottom:1px solid var(--nav-border);
+  transition:background .3s,border-color .3s
 }
 nav .inner{
   max-width:980px;margin:0 auto;
   display:flex;justify-content:space-between;align-items:center;
   height:44px;padding:0 22px
 }
-nav .logo{font-size:14px;font-weight:600;letter-spacing:-.01em;color:#1d1d1f}
+nav .logo{font-size:14px;font-weight:600;letter-spacing:-.01em;color:var(--text-primary);transition:color .3s}
 nav .links{display:flex;gap:0}
 nav .links a{
-  font-size:12px;font-weight:400;color:#1d1d1f;padding:0 16px;
-  opacity:.8;transition:opacity .2s
+  font-size:12px;font-weight:400;color:var(--text-primary);padding:0 16px;
+  opacity:.8;transition:opacity .2s,color .3s
 }
 nav .links a:hover{opacity:1}
 
@@ -39,46 +90,50 @@ nav .links a:hover{opacity:1}
 .hero{
   min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;
   padding:120px 24px 80px;
-  background:linear-gradient(180deg,#f5f5f7 0%,#e8e8ed 100%)
+  background:linear-gradient(180deg,var(--bg-hero-start) 0%,var(--bg-hero-end) 100%);
+  transition:background .3s
 }
 .hero h1{
   font-size:56px;font-weight:700;letter-spacing:-.005em;
-  background:linear-gradient(135deg,#1d1d1f 0%,#515154 100%);
+  background:linear-gradient(135deg,var(--hero-text-grad-1) 0%,var(--hero-text-grad-2) 100%);
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-  margin-bottom:8px
+  margin-bottom:8px;transition:background .3s
 }
-.hero .subtitle{font-size:24px;font-weight:400;color:#86868b;margin-bottom:16px;letter-spacing:-.01em}
-.hero .tagline{font-size:17px;color:#6e6e73;max-width:500px;line-height:1.5;margin-bottom:28px}
+.hero .subtitle{font-size:24px;font-weight:400;color:var(--text-subtle);margin-bottom:16px;letter-spacing:-.01em}
+.hero .tagline{font-size:17px;color:var(--text-muted);max-width:500px;line-height:1.5;margin-bottom:28px}
 .hero .contact-row{display:flex;flex-wrap:wrap;gap:12px 24px;justify-content:center}
 .hero .contact-row span{
-  font-size:14px;color:#6e6e73;display:inline-flex;align-items:center;gap:6px;
-  background:rgba(0,0,0,.04);padding:6px 14px;border-radius:20px
+  font-size:14px;color:var(--text-muted);display:inline-flex;align-items:center;gap:6px;
+  background:var(--tag-bg);padding:6px 14px;border-radius:20px;
+  transition:background .3s,color .3s
 }
 .hero .cta-row{margin-top:36px;display:flex;gap:14px}
 .hero .cta-primary{
   font-size:17px;color:#fff;
   background:#1d1d1f;padding:12px 24px;border-radius:980px;transition:opacity .2s
 }
+body.dark .hero .cta-primary{background:#f5f5f7;color:#1d1d1f}
 .hero .cta-primary:hover{opacity:.85}
 .hero .cta-secondary{
-  font-size:17px;color:#1d1d1f;
-  border:1px solid #1d1d1f;padding:12px 24px;border-radius:980px;transition:background .2s
+  font-size:17px;color:var(--text-primary);background:transparent;
+  border:1px solid var(--text-primary);padding:12px 24px;border-radius:980px;transition:background .2s
 }
-.hero .cta-secondary:hover{background:rgba(0,0,0,.04)}
+.hero .cta-secondary:hover{background:var(--tag-bg)}
 
 /* ─── Sections ─── */
-.section-wrapper{padding:100px 24px}
-.section-wrapper:nth-child(even){background:#fff}
-.section-wrapper:nth-child(odd){background:#f5f5f7}
+.section-wrapper{padding:100px 24px;transition:background .3s}
+.section-wrapper:nth-child(even){background:var(--bg-section-alt)}
+.section-wrapper:nth-child(odd){background:var(--bg-body)}
 .section-inner{max-width:980px;margin:0 auto}
 .section-label{
   font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
-  color:#86868b;margin-bottom:4px;
+  color:var(--text-subtle);margin-bottom:4px;transition:color .3s
 }
 .section-headline{
-  font-size:40px;font-weight:600;letter-spacing:-.003em;color:#1d1d1f;margin-bottom:12px
+  font-size:40px;font-weight:600;letter-spacing:-.003em;color:var(--text-primary);margin-bottom:12px;
+  transition:color .3s
 }
-.section-subhead{font-size:21px;font-weight:400;color:#86868b;margin-bottom:40px;max-width:600px}
+.section-subhead{font-size:21px;font-weight:400;color:var(--text-muted);margin-bottom:40px;max-width:600px;transition:color .3s}
 
 /* ─── Scroll Reveal ─── */
 .reveal{
@@ -90,55 +145,56 @@ nav .links a:hover{opacity:1}
 /* ─── Highlights ─── */
 .h-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
 .h-card{
-  background:#fff;border:1px solid #d2d2d7;border-radius:18px;
+  background:var(--bg-card);border:1px solid var(--border-color);border-radius:18px;
   padding:28px 24px;cursor:default;
-  transition:transform .35s cubic-bezier(.25,.1,.25,1),border-color .35s,box-shadow .35s
+  transition:transform .35s cubic-bezier(.25,.1,.25,1),border-color .35s,box-shadow .35s,background .3s
 }
 .h-card:hover{
-  border-color:#1d1d1f;transform:scale(1.04);
-  box-shadow:0 12px 40px rgba(0,0,0,.1)
+  border-color:var(--text-primary);transform:scale(1.04);
+  box-shadow:0 12px 40px var(--card-hover-shadow)
 }
 .h-card .h-icon{font-size:28px;margin-bottom:12px}
 .h-card .h-title{font-size:17px;font-weight:600;letter-spacing:-.01em;margin-bottom:4px}
-.h-card .h-desc{font-size:14px;color:#6e6e73;line-height:1.5}
+.h-card .h-desc{font-size:14px;color:var(--text-muted);line-height:1.5;transition:color .3s}
 
 /* ─── Timeline ─── */
 .timeline{position:relative;padding-left:28px}
 .timeline::before{
   content:'';position:absolute;left:7px;top:10px;bottom:10px;
-  width:1px;background:#d2d2d7
+  width:1px;background:var(--border-color);transition:background .3s
 }
 .t-item{position:relative;margin-bottom:48px}
 .t-item:last-child{margin-bottom:0}
 .t-item::before{
   content:'';position:absolute;left:-25px;top:7px;
   width:8px;height:8px;border-radius:50%;
-  background:#1d1d1f;border:2px solid #f5f5f7
+  background:var(--text-primary);border:2px solid var(--timeline-bg);
+  transition:background .3s,border-color .3s
 }
 .t-company{font-size:20px;font-weight:600;letter-spacing:-.01em}
-.t-role{font-size:15px;color:#86868b;margin-bottom:10px}
+.t-role{font-size:15px;color:var(--text-subtle);margin-bottom:10px;transition:color .3s}
 .t-pts{list-style:none}
 .t-pts li{
-  font-size:14px;color:#3a3a3c;line-height:1.6;margin-bottom:3px;
-  padding-left:14px;position:relative
+  font-size:14px;color:var(--text-secondary);line-height:1.6;margin-bottom:3px;
+  padding-left:14px;position:relative;transition:color .3s
 }
 .t-pts li::before{content:'—';position:absolute;left:0;color:#c7c7cc}
 
 /* ─── Projects ─── */
 .p-list{display:grid;gap:16px}
 .p-card{
-  background:#fff;border:1px solid #d2d2d7;border-radius:18px;
+  background:var(--bg-card);border:1px solid var(--border-color);border-radius:18px;
   padding:28px 30px;
-  transition:transform .35s cubic-bezier(.25,.1,.25,1),border-color .35s,box-shadow .35s
+  transition:transform .35s cubic-bezier(.25,.1,.25,1),border-color .35s,box-shadow .35s,background .3s
 }
 .p-card:hover{
-  border-color:#1d1d1f;transform:scale(1.02);
-  box-shadow:0 12px 40px rgba(0,0,0,.1)
+  border-color:var(--text-primary);transform:scale(1.02);
+  box-shadow:0 12px 40px var(--card-hover-shadow)
 }
 .p-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
 .p-name{font-size:18px;font-weight:600;letter-spacing:-.01em}
-.p-meta{font-size:13px;color:#86868b;white-space:nowrap}
-.p-body{font-size:14px;color:#3a3a3c;line-height:1.65}
+.p-meta{font-size:13px;color:var(--text-subtle);white-space:nowrap;transition:color .3s}
+.p-body{font-size:14px;color:var(--text-secondary);line-height:1.65;transition:color .3s}
 .p-body ul{list-style:none}
 .p-body li{padding-left:14px;position:relative;margin-bottom:3px}
 .p-body li::before{content:'—';position:absolute;left:0;color:#c7c7cc}
@@ -146,32 +202,109 @@ nav .links a:hover{opacity:1}
 /* ─── Skills ─── */
 .s-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
 .s-chip{
-  background:#fff;border:1px solid #d2d2d7;border-radius:14px;
+  background:var(--bg-card);border:1px solid var(--border-color);border-radius:14px;
   padding:18px 20px;cursor:default;
-  transition:transform .3s cubic-bezier(.25,.1,.25,1),border-color .3s,box-shadow .3s
+  transition:transform .3s cubic-bezier(.25,.1,.25,1),border-color .3s,box-shadow .3s,background .3s
 }
 .s-chip:hover{
-  border-color:#1d1d1f;transform:scale(1.06);
-  box-shadow:0 8px 30px rgba(0,0,0,.08)
+  border-color:var(--text-primary);transform:scale(1.06);
+  box-shadow:0 8px 30px var(--card-hover-shadow)
 }
 .s-chip .s-name{font-size:14px;font-weight:600;margin-bottom:2px}
-.s-chip .s-desc{font-size:12px;color:#86868b;line-height:1.5}
+.s-chip .s-desc{font-size:12px;color:var(--text-muted);line-height:1.5;transition:color .3s}
 
 /* ─── Info ─── */
 .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px}
 .info-block h3{font-size:17px;font-weight:600;margin-bottom:10px}
-.info-block p,.info-block li{font-size:14px;color:#3a3a3c;line-height:1.7}
+.info-block p,.info-block li{font-size:14px;color:var(--text-secondary);line-height:1.7;transition:color .3s}
 .info-block ul{list-style:none}
 .info-block li{padding-left:14px;position:relative}
 .info-block li::before{content:'—';position:absolute;left:0;color:#c7c7cc}
-.info-block .sub{color:#86868b;font-size:13px;margin-top:4px}
+.info-block .sub{color:var(--text-subtle);font-size:13px;margin-top:4px;transition:color .3s}
 
 /* ─── Footer ─── */
 footer{
   padding:40px 24px 60px;text-align:center;
-  border-top:1px solid #d2d2d7;max-width:980px;margin:0 auto
+  border-top:1px solid var(--footer-border);max-width:980px;margin:0 auto;
+  transition:border-color .3s
 }
-footer p{font-size:12px;color:#86868b}
+footer p{font-size:12px;color:var(--text-subtle);transition:color .3s}
+
+/* ─── Toolbar (Mac Style) ─── */
+.toolbar{
+  position:fixed;bottom:24px;right:24px;z-index:9999;
+  display:flex;gap:8px;
+  background:var(--toolbar-bg);backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  padding:8px 10px;border-radius:980px;
+  border:1px solid var(--toolbar-border);
+  box-shadow:0 4px 20px rgba(0,0,0,.1);
+  transition:background .3s,border-color .3s
+}
+.toolbar-btn{
+  font-family:inherit;font-size:12px;font-weight:500;
+  color:var(--text-primary);background:transparent;
+  border:none;border-radius:980px;
+  padding:8px 14px;cursor:pointer;
+  display:flex;align-items:center;gap:6px;
+  transition:background .2s,color .3s;
+  white-space:nowrap
+}
+.toolbar-btn:hover{background:var(--tag-bg)}
+.toolbar-btn:active{opacity:.7}
+.toolbar-sep{width:1px;height:24px;background:var(--border-color);margin:0 2px;align-self:center;transition:background .3s}
+
+/* ─── PDF Loading Overlay ─── */
+.pdf-overlay{
+  position:fixed;inset:0;z-index:99999;
+  background:rgba(0,0,0,.5);backdrop-filter:blur(8px);
+  display:flex;flex-direction:column;justify-content:center;align-items:center;
+  opacity:0;pointer-events:none;transition:opacity .3s
+}
+.pdf-overlay.active{opacity:1;pointer-events:auto}
+.pdf-overlay .spinner{
+  width:36px;height:36px;border:3px solid rgba(255,255,255,.2);
+  border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.pdf-overlay p{color:#fff;font-size:15px;margin-top:16px;font-weight:400}
+
+/* ─── Resume Export (offscreen) ─── */
+#resume-export{
+  position:absolute;left:-9999px;top:0;width:210mm;
+  font-family:"SF Pro SC","SF Pro Text","PingFang SC","Helvetica Neue","Helvetica","Arial",sans-serif;
+  background:#fff;color:#1f2937;
+  line-height:1.5
+}
+#resume-export .r-header{
+  background:linear-gradient(135deg,#1a56db 0%,#2563eb 50%,#3b82f6 100%);
+  padding:28px 32px 18px 32px;color:#fff;
+}
+#resume-export .r-name{font-size:28px;font-weight:700;letter-spacing:3px}
+#resume-export .r-title{font-size:13px;font-weight:400;margin-top:4px;opacity:.9}
+#resume-export .r-contact{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:12px;font-size:10px;opacity:.85}
+#resume-export .r-container{display:flex;min-height:800px}
+#resume-export .r-main{flex:1;padding:20px 24px 24px 24px}
+#resume-export .r-sidebar{width:165px;background:#f8fafc;padding:20px 14px 24px 14px;border-left:1px solid #e2e8f0}
+#resume-export .r-section-title{
+  font-size:13px;font-weight:700;color:#1a56db;margin-bottom:6px;
+  padding-bottom:3px;border-bottom:2px solid #1a56db
+}
+#resume-export .r-exp-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:3px}
+#resume-export .r-exp-company{font-size:11px;font-weight:700}
+#resume-export .r-exp-period{font-size:9px;color:#6b7280;white-space:nowrap}
+#resume-export ul{padding-left:14px;margin:2px 0 6px 0}
+#resume-export li{font-size:9px;color:#4b5563;line-height:1.65;margin-bottom:1px}
+#resume-export .r-line{font-size:9px;color:#4b5563;line-height:1.7}
+#resume-export .r-mt{margin-top:12px}
+#resume-export .r-skill{margin-bottom:5px}
+#resume-export .r-skill-name{font-size:9px;font-weight:600}
+#resume-export .r-skill-desc{font-size:8px;color:#6b7280}
+#resume-export .r-proj-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:2px}
+#resume-export .r-proj-name{font-size:10px;font-weight:700}
+#resume-export .r-proj-meta{font-size:8px;color:#6b7280;white-space:nowrap}
+#resume-export .r-cert{font-size:9px;color:#4b5563;margin-bottom:2px;padding-left:12px;position:relative}
+#resume-export .r-cert::before{content:"•";position:absolute;left:2px;color:#1a56db;font-weight:bold}
 
 /* ─── Responsive ─── */
 @media(max-width:734px){
@@ -194,49 +327,64 @@ footer p{font-size:12px;color:#86868b}
 <!-- Nav -->
 <nav>
   <div class="inner">
-    <div class="logo">丁毅</div>
+    <div class="logo" data-i18n="nav.logo">丁毅</div>
     <div class="links">
-      <a href="#expertise">优势</a>
-      <a href="#experience">经历</a>
-      <a href="#projects">项目</a>
-      <a href="#skills">技能</a>
+      <a href="#expertise" data-i18n="nav.expertise">优势</a>
+      <a href="#experience" data-i18n="nav.experience">经历</a>
+      <a href="#projects" data-i18n="nav.projects">项目</a>
+      <a href="#skills" data-i18n="nav.skills">技能</a>
     </div>
   </div>
 </nav>
 
+<!-- Toolbar -->
+<div class="toolbar">
+  <button class="toolbar-btn" onclick="exportPDF()">📄 <span data-i18n="toolbar.pdf">PDF</span></button>
+  <div class="toolbar-sep"></div>
+  <button class="toolbar-btn" onclick="toggleTheme()" id="themeBtn">🌙 <span data-i18n="toolbar.dark">夜间</span></button>
+  <div class="toolbar-sep"></div>
+  <button class="toolbar-btn" onclick="toggleLang()" id="langBtn">🌐 <span data-i18n="toolbar.lang">EN</span></button>
+</div>
+
+<!-- PDF Loading Overlay -->
+<div class="pdf-overlay" id="pdfOverlay">
+  <div class="spinner"></div>
+  <p data-i18n="pdf.generating">正在生成简历 PDF...</p>
+</div>
+
 <!-- Hero -->
 <section class="hero">
-  <h1>丁毅</h1>
-  <div class="subtitle">数据分析主管 / 数据分析专家</div>
-  <div class="tagline">5 年数据分析与经营分析经验，专注以数据驱动业务增长与经营决策</div>
+  <h1 data-i18n="hero.name">丁毅</h1>
+  <div class="subtitle" data-i18n="hero.title">数据分析主管 / 数据分析专家</div>
+  <div class="tagline" data-i18n="hero.tagline">5 年数据分析与经营分析经验，专注以数据驱动业务增长与经营决策</div>
   <div class="contact-row">
     <span>📧 dingyipython@163.com</span>
     <span>📞 15926864899</span>
-    <span>📍 杭州</span>
-    <span>💰 25-35K</span>
+    <span><span data-i18n="hero.location">📍 杭州</span></span>
+    <span>💰 <span data-i18n="hero.salary">25-35K</span></span>
   </div>
   <div class="cta-row">
-    <a class="cta-primary" href="#projects">查看项目</a>
-    <a class="cta-secondary" href="#experience">工作经历</a>
+    <a class="cta-primary" href="#projects" data-i18n="hero.cta1">查看项目</a>
+    <a class="cta-secondary" href="#experience" data-i18n="hero.cta2">工作经历</a>
   </div>
 </section>
 
 <!-- 个人优势 -->
 <div class="section-wrapper" id="expertise">
 <div class="section-inner">
-  <div class="section-label reveal">Expertise</div>
-  <div class="section-headline reveal">个人优势</div>
-  <div class="section-subhead reveal">9 项核心能力，覆盖数据全链路</div>
+  <div class="section-label reveal" data-i18n="expertise.label">Expertise</div>
+  <div class="section-headline reveal" data-i18n="expertise.headline">个人优势</div>
+  <div class="section-subhead reveal" data-i18n="expertise.subhead">9 项核心能力，覆盖数据全链路</div>
   <div class="h-grid">
-    <div class="h-card reveal"><div class="h-icon">🐍</div><div class="h-title">Python 数据开发</div><div class="h-desc">精通 Pandas、NumPy、Matplotlib，具备数据清洗、自动化脚本及 AI 工具集成能力</div></div>
-    <div class="h-card reveal"><div class="h-icon">🗄️</div><div class="h-title">SQL 数据提取</div><div class="h-desc">精通 MySQL，擅长复杂查询编写、查询优化及多源数据提取分析</div></div>
-    <div class="h-card reveal"><div class="h-icon">📊</div><div class="h-title">Tableau 可视化</div><div class="h-desc">独立完成从数据采集、清洗、可视化到交互联动分析的全流程看板搭建</div></div>
-    <div class="h-card reveal"><div class="h-icon">🤖</div><div class="h-title">影刀 RPA</div><div class="h-desc">需求调研、流程设计、开发部署全链路能力，累计落地 184 个自动化应用</div></div>
-    <div class="h-card reveal"><div class="h-icon">📐</div><div class="h-title">分析与建模</div><div class="h-desc">结构化分析、多维度拆解、漏斗分析、时间序列、逻辑回归、LTV 模型等</div></div>
-    <div class="h-card reveal"><div class="h-icon">🏗️</div><div class="h-title">业财数据一体化</div><div class="h-desc">从 0 到 1 搭建电商业财数据平台，构建覆盖收入、成本、费用、利润的全链路分析底座</div></div>
-    <div class="h-card reveal"><div class="h-icon">⚡</div><div class="h-title">AI 工程化</div><div class="h-desc">使用 Claude Code、Cursor 等进行 Vibe Coding，显著提升 RPA 与数据分析开发效率</div></div>
-    <div class="h-card reveal"><div class="h-icon">📡</div><div class="h-title">外部数据监控</div><div class="h-desc">竞品情报采集、舆情分析、行业趋势监测，输出数据驱动的市场研判报告</div></div>
-    <div class="h-card reveal"><div class="h-icon">🔄</div><div class="h-title">方法论体系</div><div class="h-desc">六大维度经营分析框架，建立标准化需求处理流程，保障高效交付</div></div>
+    <div class="h-card reveal" data-i18n-group="expertise.1"><div class="h-icon">🐍</div><div class="h-title" data-i18n="title">Python 数据开发</div><div class="h-desc" data-i18n="desc">精通 Pandas、NumPy、Matplotlib，具备数据清洗、自动化脚本及 AI 工具集成能力</div></div>
+    <div class="h-card reveal" data-i18n-group="expertise.2"><div class="h-icon">🗄️</div><div class="h-title" data-i18n="title">SQL 数据提取</div><div class="h-desc" data-i18n="desc">精通 MySQL，擅长复杂查询编写、查询优化及多源数据提取分析</div></div>
+    <div class="h-card reveal" data-i18n-group="expertise.3"><div class="h-icon">📊</div><div class="h-title" data-i18n="title">Tableau 可视化</div><div class="h-desc" data-i18n="desc">独立完成从数据采集、清洗、可视化到交互联动分析的全流程看板搭建</div></div>
+    <div class="h-card reveal" data-i18n-group="expertise.4"><div class="h-icon">🤖</div><div class="h-title" data-i18n="title">影刀 RPA</div><div class="h-desc" data-i18n="desc">需求调研、流程设计、开发部署全链路能力，累计落地 184 个自动化应用</div></div>
+    <div class="h-card reveal" data-i18n-group="expertise.5"><div class="h-icon">📐</div><div class="h-title" data-i18n="title">分析与建模</div><div class="h-desc" data-i18n="desc">结构化分析、多维度拆解、漏斗分析、时间序列、逻辑回归、LTV 模型等</div></div>
+    <div class="h-card reveal" data-i18n-group="expertise.6"><div class="h-icon">🏗️</div><div class="h-title" data-i18n="title">业财数据一体化</div><div class="h-desc" data-i18n="desc">从 0 到 1 搭建电商业财数据平台，构建覆盖收入、成本、费用、利润的全链路分析底座</div></div>
+    <div class="h-card reveal" data-i18n-group="expertise.7"><div class="h-icon">⚡</div><div class="h-title" data-i18n="title">AI 工程化</div><div class="h-desc" data-i18n="desc">使用 Claude Code、Cursor 等进行 Vibe Coding，显著提升 RPA 与数据分析开发效率</div></div>
+    <div class="h-card reveal" data-i18n-group="expertise.8"><div class="h-icon">📡</div><div class="h-title" data-i18n="title">外部数据监控</div><div class="h-desc" data-i18n="desc">竞品情报采集、舆情分析、行业趋势监测，输出数据驱动的市场研判报告</div></div>
+    <div class="h-card reveal" data-i18n-group="expertise.9"><div class="h-icon">🔄</div><div class="h-title" data-i18n="title">方法论体系</div><div class="h-desc" data-i18n="desc">六大维度经营分析框架，建立标准化需求处理流程，保障高效交付</div></div>
   </div>
 </div>
 </div>
@@ -244,21 +392,21 @@ footer p{font-size:12px;color:#86868b}
 <!-- 工作经历 -->
 <div class="section-wrapper" id="experience">
 <div class="section-inner">
-  <div class="section-label reveal">Experience</div>
-  <div class="section-headline reveal">工作经历</div>
-  <div class="section-subhead reveal">从数据专员到市场数据主管，持续驱动业务增长</div>
+  <div class="section-label reveal" data-i18n="experience.label">Experience</div>
+  <div class="section-headline reveal" data-i18n="experience.headline">工作经历</div>
+  <div class="section-subhead reveal" data-i18n="experience.subhead">从数据专员到市场数据主管，持续驱动业务增长</div>
   <div class="timeline reveal">
     <div class="t-item">
-      <div class="t-company">杭州轩妈食品有限公司</div>
-      <div class="t-role">市场数据主管 · 杭州 ｜ 2021 – 至今</div>
+      <div class="t-company" data-i18n="exp.company">杭州轩妈食品有限公司</div>
+      <div class="t-role" data-i18n="exp.role">市场数据主管 · 杭州 ｜ 2021 – 至今</div>
       <ul class="t-pts">
-        <li><strong>团队管理</strong> — 带领分析师团队，统筹全渠道数据体系建设与数据分析赋能</li>
-        <li><strong>全渠道指标体系</strong> — 搭建北极星指标体系，统一口径，覆盖访客、转化、GMV 等核心指标，实现 T-1 级自动更新</li>
-        <li><strong>RPA 自动化</strong> — 落地 184 个影刀应用，运行 1.7 万 + 小时，节省 1.1 万 + 人天，自动化覆盖率超 90%</li>
-        <li><strong>BI 看板体系</strong> — 构建 Tableau 双层看板，覆盖四大日常板块及 8 个专项战役看板</li>
-        <li><strong>经营洞察</strong> — 建立六大维度分析框架，核心建议采纳率超 80%</li>
-        <li><strong>战略规划</strong> — 年度预算匡算、渠道盈利模型优化、新品预测模型建设</li>
-        <li><strong>AI 应用</strong> — 引入 Claude Code、Cursor 等 AI 工具，搭建外部数据监控体系</li>
+        <li data-i18n-group="exp.1"><strong data-i18n="label">团队管理</strong><span data-i18n="text"> — 带领分析师团队，统筹全渠道数据体系建设与数据分析赋能</span></li>
+        <li data-i18n-group="exp.2"><strong data-i18n="label">全渠道指标体系</strong><span data-i18n="text"> — 搭建北极星指标体系，统一口径，覆盖访客、转化、GMV 等核心指标，实现 T-1 级自动更新</span></li>
+        <li data-i18n-group="exp.3"><strong data-i18n="label">RPA 自动化</strong><span data-i18n="text"> — 落地 184 个影刀应用，运行 1.7 万 + 小时，节省 1.1 万 + 人天，自动化覆盖率超 90%</span></li>
+        <li data-i18n-group="exp.4"><strong data-i18n="label">BI 看板体系</strong><span data-i18n="text"> — 构建 Tableau 双层看板，覆盖四大日常板块及 8 个专项战役看板</span></li>
+        <li data-i18n-group="exp.5"><strong data-i18n="label">经营洞察</strong><span data-i18n="text"> — 建立六大维度分析框架，核心建议采纳率超 80%</span></li>
+        <li data-i18n-group="exp.6"><strong data-i18n="label">战略规划</strong><span data-i18n="text"> — 年度预算匡算、渠道盈利模型优化、新品预测模型建设</span></li>
+        <li data-i18n-group="exp.7"><strong data-i18n="label">AI 应用</strong><span data-i18n="text"> — 引入 Claude Code、Cursor 等 AI 工具，搭建外部数据监控体系</span></li>
       </ul>
     </div>
   </div>
@@ -268,101 +416,87 @@ footer p{font-size:12px;color:#86868b}
 <!-- 项目经历 -->
 <div class="section-wrapper" id="projects">
 <div class="section-inner">
-  <div class="section-label reveal">Projects</div>
-  <div class="section-headline reveal">项目经历</div>
-  <div class="section-subhead reveal">7 个项目，从技术落地到战略支撑</div>
+  <div class="section-label reveal" data-i18n="projects.label">Projects</div>
+  <div class="section-headline reveal" data-i18n="projects.headline">项目经历</div>
+  <div class="section-subhead reveal" data-i18n="projects.subhead">7 个项目，从技术落地到战略支撑</div>
   <div class="p-list">
 
-    <div class="p-card reveal">
+    <div class="p-card reveal" data-i18n-group="proj.1">
       <div class="p-header">
-        <span class="p-name">AI 场景探索与应用</span>
-        <span class="p-meta">2025.11 – 至今 · 负责人</span>
+        <span class="p-name" data-i18n="name">AI 场景探索与应用</span>
+        <span class="p-meta" data-i18n="meta">2025.11 – 至今 · 负责人</span>
       </div>
-      <div class="p-body">
-        <ul>
-          <li><strong>AI 工程化提效</strong>：引入 Claude Code、Cursor 进行 Vibe Coding，大幅提升 RPA 与数据分析开发效率，并探索用户行为预测、库存预警等场景</li>
-          <li><strong>外部数据监控与行业洞察</strong>：搭建市场大盘监控与行业情报体系，利用 AI 自动化采集竞品信息与舆情数据，生成行业分析报告</li>
-          <li>推进 AI 算法模型在数据智能解读中的应用，推动分析成果与业务决策深度结合</li>
-        </ul>
-      </div>
+      <div class="p-body"><ul>
+        <li data-i18n="d1">引入 Claude Code、Cursor 进行 Vibe Coding，大幅提升 RPA 与数据分析开发效率，并探索用户行为预测、库存预警等场景</li>
+        <li data-i18n="d2">搭建市场大盘监控与行业情报体系，利用 AI 自动化采集竞品信息与舆情数据，生成行业分析报告</li>
+        <li data-i18n="d3">推进 AI 算法模型在数据智能解读中的应用，推动分析成果与业务决策深度结合</li>
+      </ul></div>
     </div>
 
-    <div class="p-card reveal">
+    <div class="p-card reveal" data-i18n-group="proj.2">
       <div class="p-header">
-        <span class="p-name">跨部门需求对接与战略规划支撑</span>
-        <span class="p-meta">2024.11 – 2025.10 · 负责人</span>
+        <span class="p-name" data-i18n="name">跨部门需求对接与战略规划支撑</span>
+        <span class="p-meta" data-i18n="meta">2024.11 – 2025.10 · 负责人</span>
       </div>
-      <div class="p-body">
-        <ul>
-          <li>搭建多部门需求协同机制，覆盖运营、销售、产品、财务、品牌，需求落地率 100%</li>
-          <li>参与年度预算匡算与考核指标预估，为战略目标分解提供数据支撑</li>
-          <li>搭建渠道盈利模型，从规模、毛利、费用、利润四维分析投入产出比</li>
-          <li>推进新品预测模型建设，构建渠道健康度评估体系</li>
-        </ul>
-      </div>
+      <div class="p-body"><ul>
+        <li data-i18n="d1">搭建多部门需求协同机制，覆盖运营、销售、产品、财务、品牌，需求落地率 100%</li>
+        <li data-i18n="d2">参与年度预算匡算与考核指标预估，为战略目标分解提供数据支撑</li>
+        <li data-i18n="d3">搭建渠道盈利模型，从规模、毛利、费用、利润四维分析投入产出比</li>
+        <li data-i18n="d4">推进新品预测模型建设，构建渠道健康度评估体系</li>
+      </ul></div>
     </div>
 
-    <div class="p-card reveal">
+    <div class="p-card reveal" data-i18n-group="proj.3">
       <div class="p-header">
-        <span class="p-name">经营分析指标体系搭建</span>
-        <span class="p-meta">2023.11 – 2024.10 · 负责人</span>
+        <span class="p-name" data-i18n="name">经营分析指标体系搭建</span>
+        <span class="p-meta" data-i18n="meta">2023.11 – 2024.10 · 负责人</span>
       </div>
-      <div class="p-body">
-        <ul>
-          <li>确定核心经营分析指标并开发统计算法，实现数据自动化测算与异常监控</li>
-          <li>周度/月度经营分析汇报，持续输出数据洞察与策略建议</li>
-        </ul>
-      </div>
+      <div class="p-body"><ul>
+        <li data-i18n="d1">确定核心经营分析指标并开发统计算法，实现数据自动化测算与异常监控</li>
+        <li data-i18n="d2">周度/月度经营分析汇报，持续输出数据洞察与策略建议</li>
+      </ul></div>
     </div>
 
-    <div class="p-card reveal">
+    <div class="p-card reveal" data-i18n-group="proj.4">
       <div class="p-header">
-        <span class="p-name">RPA 自动化应用开发</span>
-        <span class="p-meta">2023.08 – 2023.11 · 负责人</span>
+        <span class="p-name" data-i18n="name">RPA 自动化应用开发</span>
+        <span class="p-meta" data-i18n="meta">2023.08 – 2023.11 · 负责人</span>
       </div>
-      <div class="p-body">
-        <ul>
-          <li>实现数据采集全流程自动化：采集 → 清洗 → 标准化 → 入库</li>
-          <li>完成店铺价格巡检、直播商品卡弹窗、批量达人添加等场景自动化</li>
-        </ul>
-      </div>
+      <div class="p-body"><ul>
+        <li data-i18n="d1">实现数据采集全流程自动化：采集 → 清洗 → 标准化 → 入库</li>
+        <li data-i18n="d2">完成店铺价格巡检、直播商品卡弹窗、批量达人添加等场景自动化</li>
+      </ul></div>
     </div>
 
-    <div class="p-card reveal">
+    <div class="p-card reveal" data-i18n-group="proj.5">
       <div class="p-header">
-        <span class="p-name">Tableau 看板体系搭建</span>
-        <span class="p-meta">2022.01 – 2023.08 · 负责人</span>
+        <span class="p-name" data-i18n="name">Tableau 看板体系搭建</span>
+        <span class="p-meta" data-i18n="meta">2022.01 – 2023.08 · 负责人</span>
       </div>
-      <div class="p-body">
-        <ul>
-          <li>多数据源采集清洗，看板架构设计与可视化搭建</li>
-          <li>深入数据分析与洞察报告输出，为业务端提供量化决策依据</li>
-        </ul>
-      </div>
+      <div class="p-body"><ul>
+        <li data-i18n="d1">多数据源采集清洗，看板架构设计与可视化搭建</li>
+        <li data-i18n="d2">深入数据分析与洞察报告输出，为业务端提供量化决策依据</li>
+      </ul></div>
     </div>
 
-    <div class="p-card reveal">
+    <div class="p-card reveal" data-i18n-group="proj.6">
       <div class="p-header">
-        <span class="p-name">上市公司财务数据分析（泰迪杯）</span>
-        <span class="p-meta">2021.03 – 2021.05 · 核心代码</span>
+        <span class="p-name" data-i18n="name">上市公司财务数据分析（泰迪杯）</span>
+        <span class="p-meta" data-i18n="meta">2021.03 – 2021.05 · 核心代码</span>
       </div>
-      <div class="p-body">
-        <ul>
-          <li>独立负责全部代码编写，获第九届泰迪杯数据挖掘挑战赛全国二等奖</li>
-        </ul>
-      </div>
+      <div class="p-body"><ul>
+        <li data-i18n="d1">独立负责全部代码编写，获第九届泰迪杯数据挖掘挑战赛全国二等奖</li>
+      </ul></div>
     </div>
 
-    <div class="p-card reveal">
+    <div class="p-card reveal" data-i18n-group="proj.7">
       <div class="p-header">
-        <span class="p-name">基于方面的情感分析数据增强</span>
-        <span class="p-meta">2021.02 – 2021.05 · 核心代码</span>
+        <span class="p-name" data-i18n="name">基于方面的情感分析数据增强</span>
+        <span class="p-meta" data-i18n="meta">2021.02 – 2021.05 · 核心代码</span>
       </div>
-      <div class="p-body">
-        <ul>
-          <li>实现多种数据增强算法，论文投递国际期刊，同步申请两项发明专利</li>
-        </ul>
-      </div>
+      <div class="p-body"><ul>
+        <li data-i18n="d1">实现多种数据增强算法，论文投递国际期刊，同步申请两项发明专利</li>
+      </ul></div>
     </div>
 
   </div>
@@ -372,19 +506,19 @@ footer p{font-size:12px;color:#86868b}
 <!-- 专业技能 -->
 <div class="section-wrapper" id="skills">
 <div class="section-inner">
-  <div class="section-label reveal">Skills</div>
-  <div class="section-headline reveal">专业技能</div>
-  <div class="section-subhead reveal">9 大技能领域，覆盖数据全链路</div>
+  <div class="section-label reveal" data-i18n="skills.label">Skills</div>
+  <div class="section-headline reveal" data-i18n="skills.headline">专业技能</div>
+  <div class="section-subhead reveal" data-i18n="skills.subhead">9 大技能领域，覆盖数据全链路</div>
   <div class="s-grid">
-    <div class="s-chip reveal"><div class="s-name">Python</div><div class="s-desc">Pandas · NumPy · Matplotlib · 自动化脚本</div></div>
-    <div class="s-chip reveal"><div class="s-name">SQL / MySQL</div><div class="s-desc">复杂查询 · 查询优化 · 数据提取</div></div>
-    <div class="s-chip reveal"><div class="s-name">Tableau</div><div class="s-desc">看板搭建 · 可视化 · 交互联动 · BI</div></div>
-    <div class="s-chip reveal"><div class="s-name">影刀 RPA</div><div class="s-desc">流程自动化 · 数据采集 · 开发运维</div></div>
-    <div class="s-chip reveal"><div class="s-name">数据分析方法</div><div class="s-desc">结构化分析 · 漏斗 · 时序 · 多维度拆解</div></div>
-    <div class="s-chip reveal"><div class="s-name">数据建模</div><div class="s-desc">逻辑回归 · 决策树 · RFM · LTV 模型</div></div>
-    <div class="s-chip reveal"><div class="s-name">BI 与办公</div><div class="s-desc">指标体系 · Excel · PPT 汇报</div></div>
-    <div class="s-chip reveal"><div class="s-name">AI 工程化</div><div class="s-desc">Claude Code · Cursor · Vibe Coding</div></div>
-    <div class="s-chip reveal"><div class="s-name">外部数据监控</div><div class="s-desc">竞品情报 · 舆情分析 · AI 报告生成</div></div>
+    <div class="s-chip reveal" data-i18n-group="skill.1"><div class="s-name" data-i18n="name">Python</div><div class="s-desc" data-i18n="desc">Pandas · NumPy · Matplotlib · 自动化脚本</div></div>
+    <div class="s-chip reveal" data-i18n-group="skill.2"><div class="s-name" data-i18n="name">SQL / MySQL</div><div class="s-desc" data-i18n="desc">复杂查询 · 查询优化 · 数据提取</div></div>
+    <div class="s-chip reveal" data-i18n-group="skill.3"><div class="s-name" data-i18n="name">Tableau</div><div class="s-desc" data-i18n="desc">看板搭建 · 可视化 · 交互联动 · BI</div></div>
+    <div class="s-chip reveal" data-i18n-group="skill.4"><div class="s-name" data-i18n="name">影刀 RPA</div><div class="s-desc" data-i18n="desc">流程自动化 · 数据采集 · 开发运维</div></div>
+    <div class="s-chip reveal" data-i18n-group="skill.5"><div class="s-name" data-i18n="name">数据分析方法</div><div class="s-desc" data-i18n="desc">结构化分析 · 漏斗 · 时序 · 多维度拆解</div></div>
+    <div class="s-chip reveal" data-i18n-group="skill.6"><div class="s-name" data-i18n="name">数据建模</div><div class="s-desc" data-i18n="desc">逻辑回归 · 决策树 · RFM · LTV 模型</div></div>
+    <div class="s-chip reveal" data-i18n-group="skill.7"><div class="s-name" data-i18n="name">BI 与办公</div><div class="s-desc" data-i18n="desc">指标体系 · Excel · PPT 汇报</div></div>
+    <div class="s-chip reveal" data-i18n-group="skill.8"><div class="s-name" data-i18n="name">AI 工程化</div><div class="s-desc" data-i18n="desc">Claude Code · Cursor · Vibe Coding</div></div>
+    <div class="s-chip reveal" data-i18n-group="skill.9"><div class="s-name" data-i18n="name">外部数据监控</div><div class="s-desc" data-i18n="desc">竞品情报 · 舆情分析 · AI 报告生成</div></div>
   </div>
 </div>
 </div>
@@ -392,21 +526,21 @@ footer p{font-size:12px;color:#86868b}
 <!-- 教育 & 荣誉 -->
 <div class="section-wrapper">
 <div class="section-inner">
-  <div class="section-label reveal">Background</div>
-  <div class="section-headline reveal">教育背景 &amp; 荣誉</div>
-  <div class="section-subhead reveal">计算机专业背景，持续学习与成长</div>
+  <div class="section-label reveal" data-i18n="edu.label">Background</div>
+  <div class="section-headline reveal" data-i18n="edu.headline">教育背景 &amp; 荣誉</div>
+  <div class="section-subhead reveal" data-i18n="edu.subhead">计算机专业背景，持续学习与成长</div>
   <div class="info-grid">
     <div class="info-block reveal">
-      <h3>🎓 教育经历</h3>
-      <p><strong>湖北师范大学</strong> · 本科<br>计算机与信息工程学院<br>2018 – 2022</p>
-      <p class="sub">学习二等奖学金、学习三等奖学金</p>
+      <h3 data-i18n="edu.eduTitle">🎓 教育经历</h3>
+      <p><strong data-i18n="edu.school">湖北师范大学</strong><span data-i18n="edu.degree"> · 本科</span><br><span data-i18n="edu.major">计算机与信息工程学院</span><br><span data-i18n="edu.period">2018 – 2022</span></p>
+      <p class="sub" data-i18n="edu.honors">学习二等奖学金、学习三等奖学金</p>
     </div>
     <div class="info-block reveal">
-      <h3>🏆 荣誉证书</h3>
+      <h3 data-i18n="edu.certTitle">🏆 荣誉证书</h3>
       <ul>
-        <li>第九届泰迪杯数据挖掘挑战赛全国二等奖</li>
-        <li>大学英语四级证书</li>
-        <li>两项数据增强方法发明专利</li>
+        <li data-i18n="edu.cert1">第九届泰迪杯数据挖掘挑战赛全国二等奖</li>
+        <li data-i18n="edu.cert2">大学英语四级证书</li>
+        <li data-i18n="edu.cert3">两项数据增强方法发明专利</li>
       </ul>
     </div>
   </div>
@@ -414,10 +548,341 @@ footer p{font-size:12px;color:#86868b}
 </div>
 
 <footer>
-  <p>© 2026 丁毅 · 数据驱动增长</p>
+  <p>© 2026 <span data-i18n="footer">丁毅 · 数据驱动增长</span></p>
 </footer>
 
+<!-- Offscreen resume export target -->
+<div id="resume-export"></div>
+
 <script>
+/* ─── i18n Data ─── */
+const i18n = {
+  zh: {
+    'nav.logo':'丁毅','nav.expertise':'优势','nav.experience':'经历','nav.projects':'项目','nav.skills':'技能',
+    'toolbar.pdf':'PDF','toolbar.dark':'夜间','toolbar.lang':'EN',
+    'pdf.generating':'正在生成简历 PDF...',
+    'hero.name':'丁毅','hero.title':'数据分析主管 / 数据分析专家','hero.tagline':'5 年数据分析与经营分析经验，专注以数据驱动业务增长与经营决策',
+    'hero.location':'📍 杭州','hero.salary':'25-35K','hero.cta1':'查看项目','hero.cta2':'工作经历',
+    'expertise.label':'Expertise','expertise.headline':'个人优势','expertise.subhead':'9 项核心能力，覆盖数据全链路',
+    'expertise.1.title':'Python 数据开发','expertise.1.desc':'精通 Pandas、NumPy、Matplotlib，具备数据清洗、自动化脚本及 AI 工具集成能力',
+    'expertise.2.title':'SQL 数据提取','expertise.2.desc':'精通 MySQL，擅长复杂查询编写、查询优化及多源数据提取分析',
+    'expertise.3.title':'Tableau 可视化','expertise.3.desc':'独立完成从数据采集、清洗、可视化到交互联动分析的全流程看板搭建',
+    'expertise.4.title':'影刀 RPA','expertise.4.desc':'需求调研、流程设计、开发部署全链路能力，累计落地 184 个自动化应用',
+    'expertise.5.title':'分析与建模','expertise.5.desc':'结构化分析、多维度拆解、漏斗分析、时间序列、逻辑回归、LTV 模型等',
+    'expertise.6.title':'业财数据一体化','expertise.6.desc':'从 0 到 1 搭建电商业财数据平台，构建覆盖收入、成本、费用、利润的全链路分析底座',
+    'expertise.7.title':'AI 工程化','expertise.7.desc':'使用 Claude Code、Cursor 等进行 Vibe Coding，显著提升 RPA 与数据分析开发效率',
+    'expertise.8.title':'外部数据监控','expertise.8.desc':'竞品情报采集、舆情分析、行业趋势监测，输出数据驱动的市场研判报告',
+    'expertise.9.title':'方法论体系','expertise.9.desc':'六大维度经营分析框架，建立标准化需求处理流程，保障高效交付',
+    'experience.label':'Experience','experience.headline':'工作经历','experience.subhead':'从数据专员到市场数据主管，持续驱动业务增长',
+    'exp.company':'杭州轩妈食品有限公司','exp.role':'市场数据主管 · 杭州 ｜ 2021 – 至今',
+    'exp.1.label':'团队管理','exp.1.text':' — 带领分析师团队，统筹全渠道数据体系建设与数据分析赋能',
+    'exp.2.label':'全渠道指标体系','exp.2.text':' — 搭建北极星指标体系，统一口径，覆盖访客、转化、GMV 等核心指标，实现 T-1 级自动更新',
+    'exp.3.label':'RPA 自动化','exp.3.text':' — 落地 184 个影刀应用，运行 1.7 万 + 小时，节省 1.1 万 + 人天，自动化覆盖率超 90%',
+    'exp.4.label':'BI 看板体系','exp.4.text':' — 构建 Tableau 双层看板，覆盖四大日常板块及 8 个专项战役看板',
+    'exp.5.label':'经营洞察','exp.5.text':' — 建立六大维度分析框架，核心建议采纳率超 80%',
+    'exp.6.label':'战略规划','exp.6.text':' — 年度预算匡算、渠道盈利模型优化、新品预测模型建设',
+    'exp.7.label':'AI 应用','exp.7.text':' — 引入 Claude Code、Cursor 等 AI 工具，搭建外部数据监控体系',
+    'projects.label':'Projects','projects.headline':'项目经历','projects.subhead':'7 个项目，从技术落地到战略支撑',
+    'proj.1.name':'AI 场景探索与应用','proj.1.meta':'2025.11 – 至今 · 负责人',
+    'proj.1.d1':'引入 Claude Code、Cursor 进行 Vibe Coding，大幅提升 RPA 与数据分析开发效率，并探索用户行为预测、库存预警等场景',
+    'proj.1.d2':'搭建市场大盘监控与行业情报体系，利用 AI 自动化采集竞品信息与舆情数据，生成行业分析报告',
+    'proj.1.d3':'推进 AI 算法模型在数据智能解读中的应用，推动分析成果与业务决策深度结合',
+    'proj.2.name':'跨部门需求对接与战略规划支撑','proj.2.meta':'2024.11 – 2025.10 · 负责人',
+    'proj.2.d1':'搭建多部门需求协同机制，覆盖运营、销售、产品、财务、品牌，需求落地率 100%',
+    'proj.2.d2':'参与年度预算匡算与考核指标预估，为战略目标分解提供数据支撑',
+    'proj.2.d3':'搭建渠道盈利模型，从规模、毛利、费用、利润四维分析投入产出比',
+    'proj.2.d4':'推进新品预测模型建设，构建渠道健康度评估体系',
+    'proj.3.name':'经营分析指标体系搭建','proj.3.meta':'2023.11 – 2024.10 · 负责人',
+    'proj.3.d1':'确定核心经营分析指标并开发统计算法，实现数据自动化测算与异常监控',
+    'proj.3.d2':'周度/月度经营分析汇报，持续输出数据洞察与策略建议',
+    'proj.4.name':'RPA 自动化应用开发','proj.4.meta':'2023.08 – 2023.11 · 负责人',
+    'proj.4.d1':'实现数据采集全流程自动化：采集 → 清洗 → 标准化 → 入库',
+    'proj.4.d2':'完成店铺价格巡检、直播商品卡弹窗、批量达人添加等场景自动化',
+    'proj.5.name':'Tableau 看板体系搭建','proj.5.meta':'2022.01 – 2023.08 · 负责人',
+    'proj.5.d1':'多数据源采集清洗，看板架构设计与可视化搭建',
+    'proj.5.d2':'深入数据分析与洞察报告输出，为业务端提供量化决策依据',
+    'proj.6.name':'上市公司财务数据分析（泰迪杯）','proj.6.meta':'2021.03 – 2021.05 · 核心代码',
+    'proj.6.d1':'独立负责全部代码编写，获第九届泰迪杯数据挖掘挑战赛全国二等奖',
+    'proj.7.name':'基于方面的情感分析数据增强','proj.7.meta':'2021.02 – 2021.05 · 核心代码',
+    'proj.7.d1':'实现多种数据增强算法，论文投递国际期刊，同步申请两项发明专利',
+    'skills.label':'Skills','skills.headline':'专业技能','skills.subhead':'9 大技能领域，覆盖数据全链路',
+    'skill.1.name':'Python','skill.1.desc':'Pandas · NumPy · Matplotlib · 自动化脚本',
+    'skill.2.name':'SQL / MySQL','skill.2.desc':'复杂查询 · 查询优化 · 数据提取',
+    'skill.3.name':'Tableau','skill.3.desc':'看板搭建 · 可视化 · 交互联动 · BI',
+    'skill.4.name':'影刀 RPA','skill.4.desc':'流程自动化 · 数据采集 · 开发运维',
+    'skill.5.name':'数据分析方法','skill.5.desc':'结构化分析 · 漏斗 · 时序 · 多维度拆解',
+    'skill.6.name':'数据建模','skill.6.desc':'逻辑回归 · 决策树 · RFM · LTV 模型',
+    'skill.7.name':'BI 与办公','skill.7.desc':'指标体系 · Excel · PPT 汇报',
+    'skill.8.name':'AI 工程化','skill.8.desc':'Claude Code · Cursor · Vibe Coding',
+    'skill.9.name':'外部数据监控','skill.9.desc':'竞品情报 · 舆情分析 · AI 报告生成',
+    'edu.label':'Background','edu.headline':'教育背景 & 荣誉','edu.subhead':'计算机专业背景，持续学习与成长',
+    'edu.eduTitle':'🎓 教育经历','edu.certTitle':'🏆 荣誉证书',
+    'edu.school':'湖北师范大学','edu.degree':' · 本科','edu.major':'计算机与信息工程学院','edu.period':'2018 – 2022',
+    'edu.honors':'学习二等奖学金、学习三等奖学金',
+    'edu.cert1':'第九届泰迪杯数据挖掘挑战赛全国二等奖','edu.cert2':'大学英语四级证书','edu.cert3':'两项数据增强方法发明专利',
+    'footer':'丁毅 · 数据驱动增长'
+  },
+  en: {
+    'nav.logo':'Yi Ding','nav.expertise':'Expertise','nav.experience':'Experience','nav.projects':'Projects','nav.skills':'Skills',
+    'toolbar.pdf':'PDF','toolbar.dark':'Dark','toolbar.lang':'中',
+    'pdf.generating':'Generating resume PDF...',
+    'hero.name':'Yi Ding','hero.title':'Data Analytics Manager / Data Analytics Expert','hero.tagline':'5+ years in data analytics & business analytics, driving growth through data-driven decisions',
+    'hero.location':'📍 Hangzhou','hero.salary':'25-35K','hero.cta1':'View Projects','hero.cta2':'Experience',
+    'expertise.label':'Expertise','expertise.headline':'Core Strengths','expertise.subhead':'9 key capabilities across the full data chain',
+    'expertise.1.title':'Python Development','expertise.1.desc':'Proficient in Pandas, NumPy, Matplotlib. Skilled in data cleaning, automation scripts, and AI tool integration.',
+    'expertise.2.title':'SQL / MySQL','expertise.2.desc':'Expert in complex queries, query optimization, and multi-source data extraction and analysis.',
+    'expertise.3.title':'Tableau Visualization','expertise.3.desc':'End-to-end dashboard development: data collection, cleaning, visualization, and interactive analysis.',
+    'expertise.4.title':'Yingdao RPA','expertise.4.desc':'Full RPA lifecycle expertise - requirements, design, development, deployment. 184 apps delivered.',
+    'expertise.5.title':'Analysis & Modeling','expertise.5.desc':'Structured analysis, multi-dimension decomposition, cohort analysis, time series, regression, LTV models.',
+    'expertise.6.title':'Finance-Data Integration','expertise.6.desc':'Built e-commerce business-finance data platform covering revenue, cost, expense, and profit analytics.',
+    'expertise.7.title':'AI Engineering','expertise.7.desc':'Using Claude Code, Cursor for Vibe Coding to boost RPA and data analytics development efficiency.',
+    'expertise.8.title':'External Data Monitoring','expertise.8.desc':'Competitor intelligence collection, sentiment analysis, market trend monitoring, AI-powered reports.',
+    'expertise.9.title':'Methodology System','expertise.9.desc':'Six-dimension business analysis framework with standardized demand processing for efficient delivery.',
+    'experience.label':'Experience','experience.headline':'Work Experience','experience.subhead':'From data specialist to analytics manager, driving business growth',
+    'exp.company':'Xuanma Food (Hangzhou) Co., Ltd.','exp.role':'Data Analytics Manager · Hangzhou ｜ 2021 – Present',
+    'exp.1.label':'Team Management','exp.1.text':' — Led a team of analysts, oversaw multi-channel data system development and data-driven empowerment.',
+    'exp.2.label':'Indicator System','exp.2.text':' — Built a North Star indicator system unifying metrics across online/offline channels with T-1 auto-updates.',
+    'exp.3.label':'RPA Automation','exp.3.text':' — Deployed 184 RPA apps, 17K+ running hours, saved 11K+ person-days, 90%+ automation coverage.',
+    'exp.4.label':'BI Dashboard','exp.4.text':' — Built Tableau dual-layer dashboards covering daily ops and 8 campaign-specific boards.',
+    'exp.5.label':'Business Insights','exp.5.text':' — Established 6-dimension analysis framework with 80%+ core recommendation adoption rate.',
+    'exp.6.label':'Strategic Planning','exp.6.text':' — Contributed to annual budgeting, channel profitability modeling, and new product forecasting.',
+    'exp.7.label':'AI Application','exp.7.text':' — Introduced Claude Code and Cursor; built external data monitoring system for competitive intelligence.',
+    'projects.label':'Projects','projects.headline':'Key Projects','projects.subhead':'7 projects spanning technical execution to strategic support',
+    'proj.1.name':'AI Exploration & Application','proj.1.meta':'2025.11 – Present · Lead',
+    'proj.1.d1':'Applied Claude Code and Cursor for Vibe Coding to accelerate RPA and analytics development; explored user behavior prediction and inventory warning scenarios.',
+    'proj.1.d2':'Built market monitoring and competitive intelligence system using AI for automated data collection and report generation.',
+    'proj.1.d3':'Promoted AI model application in data interpretation, bridging analytics output with business decision-making.',
+    'proj.2.name':'Cross-Dept Coordination & Strategic Planning','proj.2.meta':'2024.11 – 2025.10 · Lead',
+    'proj.2.d1':'Established a cross-department collaboration mechanism covering operations, sales, product, finance, and brand teams; 100% request fulfillment rate.',
+    'proj.2.d2':'Participated in annual budgeting and KPI estimation, providing data support for strategic target decomposition.',
+    'proj.2.d3':'Built channel profitability models analyzing ROI across scale, margin, cost, and profit dimensions.',
+    'proj.2.d4':'Developed new product forecasting models and channel health assessment systems.',
+    'proj.3.name':'Business Analytics Indicator System','proj.3.meta':'2023.11 – 2024.10 · Lead',
+    'proj.3.d1':'Defined core business KPIs and developed statistical algorithms for automated calculation and anomaly monitoring.',
+    'proj.3.d2':'Delivered weekly/monthly analysis reports with actionable insights and strategic recommendations.',
+    'proj.4.name':'RPA Automation Development','proj.4.meta':'2023.08 – 2023.11 · Lead',
+    'proj.4.d1':'Implemented full-process data collection automation: extraction → cleaning → standardization → storage.',
+    'proj.4.d2':'Automated price inspection, live-stream product cards, and batch influencer management workflows.',
+    'proj.5.name':'Tableau Dashboard System','proj.5.meta':'2022.01 – 2023.08 · Lead',
+    'proj.5.d1':'Multi-source data collection and cleaning, dashboard architecture design and visualization.',
+    'proj.5.d2':'Delivered in-depth data analysis and insights to support data-driven decision-making.',
+    'proj.6.name':'Financial Fraud Prediction (Tidy Cup)','proj.6.meta':'2021.03 – 2021.05 · Core Dev',
+    'proj.6.d1':'Sole developer: data preprocessing, feature engineering, model training and evaluation. Won National Second Prize.',
+    'proj.7.name':'Aspect-Based Sentiment Analysis','proj.7.meta':'2021.02 – 2021.05 · Core Dev',
+    'proj.7.d1':'Developed multiple data augmentation methods; paper submitted to international journal; two patent applications filed.',
+    'skills.label':'Skills','skills.headline':'Technical Skills','skills.subhead':'9 skill domains across the data analytics spectrum',
+    'skill.1.name':'Python','skill.1.desc':'Pandas · NumPy · Matplotlib · Automation',
+    'skill.2.name':'SQL / MySQL','skill.2.desc':'Complex Queries · Optimization · Data Extraction',
+    'skill.3.name':'Tableau','skill.3.desc':'Dashboards · Visualization · BI · Interactive Analysis',
+    'skill.4.name':'Yingdao RPA','skill.4.desc':'Process Automation · Data Collection · Ops',
+    'skill.5.name':'Analytics Methods','skill.5.desc':'Structured · Funnel · Time Series · Multi-Dimension',
+    'skill.6.name':'Data Modeling','skill.6.desc':'Logistic Regression · Decision Tree · RFM · LTV',
+    'skill.7.name':'BI & Office','skill.7.desc':'KPI Systems · Dashboards · Excel · PPT',
+    'skill.8.name':'AI Engineering','skill.8.desc':'Claude Code · Cursor · Vibe Coding',
+    'skill.9.name':'External Monitoring','skill.9.desc':'Competitive Intel · Sentiment · AI Reports',
+    'edu.label':'Background','edu.headline':'Education & Honors','edu.subhead':'Computer science background with continuous learning',
+    'edu.eduTitle':'🎓 Education','edu.certTitle':'🏆 Certifications',
+    'edu.school':'Hubei Normal University','edu.degree':' · Bachelor','edu.major':'Computer Science & Information Engineering','edu.period':'2018 – 2022',
+    'edu.honors':'Academic Scholarship (2nd & 3rd Class)',
+    'edu.cert1':'Tidy Cup Data Mining Challenge - National Second Prize','edu.cert2':'CET-4 (College English Test Band 4)','edu.cert3':'Two Data Augmentation Patents (Pending)',
+    'footer':'Yi Ding · Data-Driven Growth'
+  }
+};
+
+/* ─── Current state ─── */
+let currentLang = 'zh';
+let isDark = false;
+
+/* ─── Theme Toggle ─── */
+function toggleTheme(){
+  isDark = !isDark;
+  document.body.classList.toggle('dark', isDark);
+  const btn = document.getElementById('themeBtn');
+  const label = isDark ? (currentLang === 'zh' ? '☀️ 明亮' : '☀️ Light') : (currentLang === 'zh' ? '🌙 夜间' : '🌙 Dark');
+  btn.innerHTML = label;
+}
+
+/* ─── Language Toggle ─── */
+function toggleLang(){
+  currentLang = currentLang === 'zh' ? 'en' : 'zh';
+  document.documentElement.lang = currentLang === 'zh' ? 'zh-CN' : 'en';
+  const langData = i18n[currentLang];
+
+  // Update all data-i18n elements
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if(langData[key]) el.textContent = langData[key];
+  });
+
+  // Update theme button text
+  const themeBtn = document.getElementById('themeBtn');
+  themeBtn.innerHTML = isDark ? (currentLang === 'zh' ? '☀️ 明亮' : '☀️ Light') : (currentLang === 'zh' ? '🌙 夜间' : '🌙 Dark');
+
+  // Update lang button text
+  document.getElementById('langBtn').innerHTML = '🌐 ' + (currentLang === 'zh' ? 'EN' : '中');
+}
+
+/* ─── PDF Export ─── */
+function exportPDF(){
+  const overlay = document.getElementById('pdfOverlay');
+  overlay.classList.add('active');
+
+  const target = document.getElementById('resume-export');
+  const langData = i18n.zh; // Always export Chinese resume
+
+  target.innerHTML = `
+    <div class="r-header">
+      <div class="r-name">${langData['hero.name']}</div>
+      <div class="r-title">${langData['hero.title']}</div>
+      <div class="r-contact">
+        <span>📧 dingyipython@163.com</span>
+        <span>📞 15926864899</span>
+        <span>📍 杭州</span>
+        <span>💰 25-35K</span>
+      </div>
+    </div>
+    <div class="r-container">
+      <div class="r-main">
+        <div class="r-section-title">个人优势</div>
+        <ul>
+          <li>精通 <b>Python</b>（Pandas、NumPy、Matplotlib），具备数据清洗、自动化脚本及AI工具集成能力</li>
+          <li>精通 <b>MySQL</b>，擅长复杂查询编写、查询优化及多源数据提取分析</li>
+          <li>精通 <b>Tableau</b>，可独立完成从数据采集、清洗、可视化到交互联动分析的全流程看板搭建</li>
+          <li>精通 <b>影刀RPA</b>，具备需求调研、流程设计、应用开发、部署运维全链路能力，累计落地184个应用</li>
+          <li>熟练掌握常用分析方法：描述性分析、相关分析、漏斗分析、时间序列、结构化分析、多维度指标拆解等</li>
+          <li>熟悉常用分析模型：逻辑回归、决策树、SVM、RFM模型、用户生命周期价值（LTV）模型</li>
+          <li>从0到1搭建<b>电商业财数据一体化平台</b>，构建覆盖收入、成本、费用、利润的全链路数字化经营分析底座</li>
+          <li><b>AI工程化实战能力</b>：使用Claude Code、Cursor等AI编程工具进行辅助开发（Vibe Coding）</li>
+          <li><b>外部数据监控与分析能力</b>：利用AI工具进行竞品情报采集、舆情分析、行业趋势监测</li>
+        </ul>
+
+        <div class="r-section-title r-mt">工作经历</div>
+        <div class="r-exp-header">
+          <span class="r-exp-company">杭州轩妈食品有限公司 · 市场数据主管</span>
+          <span class="r-exp-period">杭州 · 2021 - 至今</span>
+        </div>
+        <ul>
+          <li><b>团队管理</b>：带领分析师团队，统筹全渠道数据体系建设与数据分析赋能</li>
+          <li><b>全渠道指标体系</b>：搭建北极星指标体系，统一线上线下核心指标口径，实现T-1级自动更新</li>
+          <li><b>RPA自动化</b>：累计落地184个影刀RPA应用，运行1.7万+小时，节省1.1万+人天，自动化覆盖率超90%</li>
+          <li><b>BI看板体系</b>：构建Tableau双层看板体系，覆盖四大日常板块及8个专项战役看板</li>
+          <li><b>经营洞察</b>：建立六大维度分析框架（周度例会、渠道健康度、新品生命周期、节点复盘、用户价值挖掘、市场趋势），核心建议采纳率超80%</li>
+          <li><b>战略规划</b>：参与年度预算匡算、渠道盈利模型优化、新品预测模型建设等战略级工作</li>
+          <li><b>AI应用</b>：引入Claude Code、Cursor等AI工具辅助RPA开发；搭建外部数据监控体系</li>
+        </ul>
+
+        <div class="r-section-title r-mt">项目经历</div>
+
+        <div><div class="r-proj-header"><span class="r-proj-name">AI场景探索与应用</span><span class="r-proj-meta">2025.11 - 至今 | 负责人</span></div>
+        <ul>
+          <li><b>AI工程化提效</b>：引入Claude Code、Cursor进行Vibe Coding，大幅提升RPA与数据分析开发效率，探索用户行为预测、库存预警等场景</li>
+          <li><b>外部数据监控与行业洞察</b>：搭建市场大盘监控与行业情报体系，利用AI自动化采集行业动态与竞品信息，生成AI行业分析报告</li>
+          <li>推进AI算法模型在数据智能解读中的应用，推动分析成果与业务决策深度结合</li>
+        </ul></div>
+
+        <div><div class="r-proj-header"><span class="r-proj-name">跨部门需求对接与战略规划支撑</span><span class="r-proj-meta">2024.11 - 2025.10 | 负责人</span></div>
+        <ul>
+          <li>搭建多部门需求协同机制（运营、销售、产品、财务、品牌），需求落地率100%</li>
+          <li>参与年度预算匡算与考核指标预估，为战略目标分解提供数据支撑</li>
+          <li>搭建渠道盈利模型，从规模、毛利、费用、利润四维分析投入产出比</li>
+          <li>推进新品预测模型建设，构建渠道健康度评估体系</li>
+        </ul></div>
+
+        <div><div class="r-proj-header"><span class="r-proj-name">经营分析指标体系搭建</span><span class="r-proj-meta">2023.11 - 2024.10 | 负责人</span></div>
+        <ul>
+          <li>确定核心经营分析指标（销售额、推广费用、搭赠费用、毛保/返利、运费、产品成本等），开发统计算法</li>
+          <li>周度/月度经营分析汇报，输出数据洞察与策略建议</li>
+        </ul></div>
+
+        <div><div class="r-proj-header"><span class="r-proj-name">RPA自动化应用开发</span><span class="r-proj-meta">2023.08 - 2023.11 | 负责人</span></div>
+        <ul>
+          <li>实现数据采集全流程自动化：采集→清洗→标准化→入库</li>
+          <li>完成店铺价格巡检、直播商品卡弹窗、批量达人添加等场景自动化</li>
+        </ul></div>
+
+        <div><div class="r-proj-header"><span class="r-proj-name">Tableau看板体系搭建</span><span class="r-proj-meta">2022.01 - 2023.08 | 负责人</span></div>
+        <ul>
+          <li>多数据源采集清洗，看板架构设计与可视化搭建</li>
+          <li>深入数据分析与洞察报告输出，为业务端提供量化决策依据</li>
+        </ul></div>
+
+        <div><div class="r-proj-header"><span class="r-proj-name">上市公司财务数据分析（泰迪杯）</span><span class="r-proj-meta">2021.03 - 2021.05 | 核心代码</span></div>
+        <ul><li>独立负责全部代码编写，获第九届泰迪杯数据挖掘挑战赛全国二等奖</li></ul></div>
+
+        <div><div class="r-proj-header"><span class="r-proj-name">基于方面的情感分析数据增强</span><span class="r-proj-meta">2021.02 - 2021.05 | 核心代码</span></div>
+        <ul><li>实现多种数据增强算法，论文投递国际期刊，同步申请两项发明专利</li></ul></div>
+
+        <div class="r-section-title r-mt">教育经历</div>
+        <div class="r-line"><b>湖北师范大学</b> · 本科 · 计算机与信息工程学院 · 2018 - 2022</div>
+        <div class="r-line">学习二等奖学金、学习三等奖学金</div>
+      </div>
+      <div class="r-sidebar">
+        <div class="r-section-title">专业技能</div>
+        <div class="r-skill"><div class="r-skill-name">Python</div><div class="r-skill-desc">Pandas, NumPy, Matplotlib, 自动化</div></div>
+        <div class="r-skill"><div class="r-skill-name">SQL/MySQL</div><div class="r-skill-desc">复杂查询, 查询优化, 数据提取</div></div>
+        <div class="r-skill"><div class="r-skill-name">Tableau</div><div class="r-skill-desc">看板搭建, 可视化, BI体系</div></div>
+        <div class="r-skill"><div class="r-skill-name">影刀RPA</div><div class="r-skill-desc">流程自动化, 数据采集, 运维</div></div>
+        <div class="r-skill"><div class="r-skill-name">数据分析方法</div><div class="r-skill-desc">结构化分析, 漏斗, 时序</div></div>
+        <div class="r-skill"><div class="r-skill-name">数据建模</div><div class="r-skill-desc">逻辑回归, RFM, LTV模型</div></div>
+        <div class="r-skill"><div class="r-skill-name">BI与办公</div><div class="r-skill-desc">指标体系, Excel, PPT</div></div>
+        <div class="r-skill"><div class="r-skill-name">AI工程化</div><div class="r-skill-desc">Claude Code, Cursor, Vibe Coding</div></div>
+        <div class="r-skill"><div class="r-skill-name">外部监控</div><div class="r-skill-desc">竞品情报, 舆情, AI报告</div></div>
+
+        <div class="r-section-title r-mt">荣誉证书</div>
+        <div class="r-cert">泰迪杯数据挖掘挑战赛二等奖</div>
+        <div class="r-cert">大学英语四级证书</div>
+        <div class="r-cert">两项数据增强发明专利</div>
+
+        <div class="r-section-title r-mt">语言能力</div>
+        <div class="r-cert">中文 · 母语</div>
+        <div class="r-cert">英语 · 中级</div>
+      </div>
+    </div>
+  `;
+
+  setTimeout(() => {
+    html2canvas(target, {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: '#ffffff',
+      width: 793,  // ~210mm at ~96dpi
+    }).then(canvas => {
+      const imgData = canvas.toDataURL('image/jpeg', 0.95);
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pdfW = 210;
+      const pdfH = 297;
+      const imgW = pdfW;
+      const imgH = (canvas.height / canvas.width) * pdfW;
+      if (imgH > pdfH) {
+        // Multi-page
+        let remainingH = imgH;
+        let srcY = 0;
+        let page = 0;
+        while (remainingH > 0) {
+          if (page > 0) pdf.addPage();
+          const currentH = Math.min(remainingH, pdfH);
+          const ratio = currentH / imgH;
+          pdf.addImage(imgData, 'JPEG', 0, srcY === 0 ? 0 : -(srcY), imgW, imgH);
+          remainingH -= currentH;
+          srcY += currentH * (canvas.height / imgH);
+          page++;
+        }
+      } else {
+        pdf.addImage(imgData, 'JPEG', 0, 0, imgW, imgH);
+      }
+      pdf.save('丁毅_个人简历.pdf');
+      overlay.classList.remove('active');
+      target.innerHTML = '';
+    }).catch(() => {
+      overlay.classList.remove('active');
+      target.innerHTML = '';
+      alert(currentLang === 'zh' ? '导出失败，请重试' : 'Export failed, please try again');
+    });
+  }, 500);
+}
+
+// Scroll reveal
 (function(){
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
@@ -428,10 +893,8 @@ footer p{font-size:12px;color:#86868b}
       }
     });
   }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 })();
 </script>
-
 </body>
 </html>
